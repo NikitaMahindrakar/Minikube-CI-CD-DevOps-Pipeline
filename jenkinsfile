@@ -17,8 +17,9 @@ pipeline {
         stage('Test App') {
             steps {
                 sh '''
-                python -m pip install -r app\\requirements.txt
-                python -m py_compile app\\app.py
+                python3 --version
+                python -m pip install -r app/requirements.txt
+                python -m py_compile app/app.py
                 '''
             }
         }
@@ -35,8 +36,8 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 sh '''
-                kubectl apply -f k8s\\service.yaml
-                kubectl apply -f k8s\\deployment.yaml
+                kubectl apply -f k8s/service.yaml
+                kubectl apply -f k8s/deployment.yaml
 
                 kubectl rollout status deployment/flask-app
                 '''
