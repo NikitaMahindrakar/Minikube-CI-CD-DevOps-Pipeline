@@ -1,5 +1,5 @@
 pipeline {
-    agent any
+    agent none
     environment {
         IMAGE_NAME = "flask-app"
         TAG = "${BUILD_NUMBER}"
@@ -14,6 +14,11 @@ pipeline {
         }
 
         stage('Test App') {
+            agent {
+                docker {
+                    image 'python:3.10'
+                }
+            }
             steps {
                 sh '''
                 python3 --version
