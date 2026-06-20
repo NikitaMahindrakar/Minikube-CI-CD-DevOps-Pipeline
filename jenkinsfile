@@ -22,12 +22,10 @@ pipeline {
             steps {
                 sh '''
                 python3 --version
-        ls -la
-        find . -name "*.py"
-        find . -name "requirements.txt"
+    
 
-        pip install -r requirements.txt
-        python -m py_compile app.py
+        pip install -r ./app/requirement.txt
+        python -m py_compile ./app/app.py
                 '''
             }
         }
