@@ -46,6 +46,8 @@ pipeline {
             agent any
             steps {
                 sh '''
+                export KUBECONFIG=/var/jenkins_home/.kube/config
+                kubectl get pods
                 kubectl apply -f ./k8s/service.yml
                 kubectl apply -f ./k8s/deployment.yml
 
