@@ -36,11 +36,25 @@ pipeline {
             agent any
             steps {
                 sh '''
-                docker build -t $IMAGE_NAME:$TAG .
-        docker tag $IMAGE_NAME:$TAG $IMAGE_NAME:latest
+                docker build -t nikita311/flask-app:${BUILD_NUMBER} .
+                docker tag nikita311/flask-app:${BUILD_NUMBER} nikita311/flask-app:latest
                 '''
             }
         }
+
+        stage('Push Image') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-creds',usernameVariable: 'DOCKER_USER',passwordVariable: 'DOCKER_PASS' )])
+                {
+                 sh '''
+                 echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+
+                 docker push nikita311/flask-app:${BUILD_NUMBER}
+                 docker push nikita311/flask-app:latest
+                '''
+               }
+           }
+       }
 
         stage('Deploy to Kubernetes') {
             agent any
@@ -50,6 +64,7 @@ pipeline {
                 kubectl get pods
                 kubectl apply -f ./k8s/service.yml
                 kubectl apply -f ./k8s/deployment.yml
+                kubectl rollout restart deployment flask-app
 
                 kubectl rollout status deployment/flask-app
                 '''
